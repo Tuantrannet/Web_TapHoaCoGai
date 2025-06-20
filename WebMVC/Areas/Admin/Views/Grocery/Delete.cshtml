@@ -1,0 +1,73 @@
+﻿@model Grocery
+
+@{
+    ViewBag.Title = "Xóa sản phẩm";
+}
+
+<h2> Xóa sản phẩm</h2>
+
+
+    <div class="row">
+        <div class="col-10">
+            <div class="form-group">
+                <label asp-for="Name" class="control-label">Tên</label>
+                <input asp-for="Name" class="form-control" readonly/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Type" class="control-label">Loại</label>
+                <input asp-for="Type" class="form-control" readonly/>
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LowPrice" class="control-label">Giá thấp</label>
+                <input asp-for="LowPrice" class="form-control" readonly />
+                <span asp-validation-for="LowPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="HighPrice" class="control-label">Giá cao</label>
+                <input asp-for="HighPrice" class="form-control" readonly/>
+                <span asp-validation-for="HighPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="State" class="control-label">Tình Trạng</label>
+                <input asp-for="State" class="form-control" readonly/>
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductionDate" class="control-label">Ngày sản xuất(tháng/ngày/năm)</label>
+                <input asp-for="ProductionDate" type="text" class="form-control" readonly/>
+                <span asp-validation-for="ProductionDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExpiryDate" class="control-label">Hạn sử dụng(tháng/ngày/năm)</label>
+                <input asp-for="ExpiryDate" type="text" class="form-control" readonly/>
+                <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-2">
+            <img src="@Model.ImageUrl" width="100%"
+                 style="border-radius:5px; border:1px solid #bbb9b9" />
+        </div>
+    </div>
+
+<form asp-action="Delete" method="post" >
+    <input asp-for="ImageUrl" Hidden/>
+    <input asp-for="Id" Hidden />
+    <div class="form-group">
+        <input type="submit" value="Xóa" class="btn btn-primary" />
+    </div>
+    <div class="row">
+        <div class="col-6 col-md-3">
+            <a asp-controller="Grocery" asp-action="Index" class="btn btn-outline-primary border form-control">
+                Quay lại danh sách
+            </a>
+        </div>
+    </div>
+</form>
+@section Scripts
+{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

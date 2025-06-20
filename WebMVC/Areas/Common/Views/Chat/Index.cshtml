@@ -1,0 +1,27 @@
+﻿@model List<User>
+
+<h2>Customer List</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-area="Common"
+                       asp-controller="Chat"
+                       asp-action="Room"
+                       asp-route-customerId="@user.Id"
+                       class="btn btn-link">
+                        @user.Username
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

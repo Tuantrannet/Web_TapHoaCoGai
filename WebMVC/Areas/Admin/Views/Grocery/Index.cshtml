@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Grocery>
+
+@{
+    ViewBag.Title = "Danh sách tạp hóa";
+}
+<h2>Danh sách tạp hóa</h2>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}
+
+<div class="mb-3">
+    <a asp-controller="Grocery" asp-action="Upsert" class="btn btn-primary">
+        <i class="bi bi-pencil-square"></i> Thêm mới
+    </a>
+</div>
+
+<form asp-controller="Grocery" asp-action="Index" method="get">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" name="searchString" placeholder="Tìm kiếm theo tên">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+        </div>
+    </div>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Tên</th>
+            <th>Loại</th>
+            <th>Giá Thấp</th>
+            <th>Giá Cao</th>
+            <th>Tình trạng</th>
+            <th>Ngày sản xuất</th>
+            <th>Hạn sử dụng</th>
+            <th>Số ngày còn hạn sử dụng</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var grocery in Model)
+        {
+            TimeSpan timeRemaining = grocery.ExpiryDate - DateTime.Now;
+            int daysRemaining = (int)timeRemaining.TotalDays;
+            string daysremaining = daysRemaining.ToString();
+            string productionday = @grocery.ProductionDate.ToString("dd/MM/yyyy");
+            string expiryday = @grocery.ExpiryDate.ToString("dd/MM/yyyy");
+            if (@grocery.ProductionDate.ToString("dd/MM/yyyy") == "01/01/0001" || @grocery.ExpiryDate.ToString("dd/MM/yyyy") == "01/01/0001")
+            {
+                productionday = "Không có hạn";
+                expiryday = "Không có hạn";
+                daysremaining = "Không có hạn";
+            }
+            <tr>
+                <td>@grocery.Name</td>
+                <td>@grocery.Type</td>
+                <td>@grocery.LowPrice</td>
+                <td>@grocery.HighPrice</td>
+                <td>@grocery.State</td>
+                <td>@productionday</td>
+                <td>@expiryday</td>
+                <td>@daysremaining</td>
+
+                <td>
+                    <div class="w-75 btn-group" role="group">
+                        <a asp-controller="Grocery" asp-action="Upsert" asp-route-id="@grocery.Id" class="btn btn-primary mx-2">
+                            <i class="bi bi-pencil-square"></i> Sửa
+                        </a>
+                        <a asp-controller="Grocery" asp-action="Delete" asp-route-id="@grocery.Id" class="btn btn-danger mx-2">
+                            <i class="bi bi-trash-fill"></i> Xóa
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

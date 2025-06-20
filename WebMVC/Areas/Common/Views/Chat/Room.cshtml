@@ -1,0 +1,51 @@
+﻿@model List<Message>
+@{
+    ViewBag.Title = "Chat Room";
+    var roomId = ViewBag.RoomId.ToString();
+    var customerId = ViewBag.CustomerId;
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var username = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+}
+
+<h2>Chat with @username</h2>
+
+<div id="chatBox" style="border:1px solid #ccc; height:300px; overflow-y:scroll; padding:10px;">
+    @foreach (var msg in Model)
+    {
+        <div>
+            <b>@(msg.Senderid.ToString() == currentUserId ? "You" : msg.Senderid):</b>
+            @msg.Content
+        </div>
+    }
+</div>
+
+<div class="mt-3">
+    <input type="text" id="messageInput" class="form-control" placeholder="Type a message..." />
+    <button class="btn btn-primary mt-2" onclick="sendMessage()">Gửi</button>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub") // path tới SignalR hub của bạn
+            .build();
+
+        connection.start().then(() => {
+            console.log("SignalR connected.");
+            connection.invoke("JoinRoom", "@roomId");
+        });
+
+        connection.on("ReceiveMessage", function (senderId, content) {
+            const div = document.createElement("div");
+            div.innerHTML = `<b>${senderId === "@currentUserId" ? "You" : senderId}:</b> ${content}`;
+            document.getElementById("chatBox").appendChild(div);
+        });
+
+        function sendMessage() {
+            const content = document.getElementById("messageInput").value;
+            connection.invoke("SendMessageToRoom", "@roomId", "@currentUserId", content);
+            document.getElementById("messageInput").value = "";
+        }
+    </script>
+}
