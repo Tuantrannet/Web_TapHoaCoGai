@@ -38,15 +38,21 @@ namespace WebMVC.Areas.Common.Controllers
         public async Task<IActionResult> Room(int customerId)
         {
             var room = await _roomService.GetRoomsAsync();
+            var messages = await _messageService.GetMessagesAsync();
+            var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var filterroom = room.FirstOrDefault(u => u.Customerid == customerId);
-
-            List<Message> messages = await _messageService.GetMessagesAsync();
-            var filtermessages = messages.Where(m => m.Roomid == filterroom.Id).OrderBy(m=> m.Id).ToList();
-
+            var filtermessages = messages.Where(m => m.Roomid == filterroom.Id).OrderBy(m => m.Id).ToList();//
             ViewBag.RoomId = filterroom.Id.ToString();
-            ViewBag.CustomerId = customerId;
 
-            return View(messages);
+            if (currentUserId != "1")
+            {
+                var currentroom = room.FirstOrDefault(r => r.Customerid.ToString() == currentUserId);
+                var currentroomid = currentroom.Id;
+                filtermessages = messages.Where(m => m.Roomid == currentroomid).OrderBy(m => m.Id).ToList();
+                ViewBag.RoomId = currentroomid;
+            }
+
+            return View(filtermessages);
 
         }
     }

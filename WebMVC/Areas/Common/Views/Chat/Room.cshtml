@@ -2,7 +2,6 @@
 @{
     ViewBag.Title = "Chat Room";
     var roomId = ViewBag.RoomId.ToString();
-    var customerId = ViewBag.CustomerId;
     var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
     var username = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
 }
@@ -33,7 +32,7 @@
 
         connection.start().then(() => {
             console.log("SignalR connected.");
-            connection.invoke("JoinRoom", "@roomId");
+            connection.invoke("JoinRoom", "@roomId");//
         });
 
         connection.on("ReceiveMessage", function (senderId, content) {
@@ -44,7 +43,7 @@
 
         function sendMessage() {
             const content = document.getElementById("messageInput").value;
-            connection.invoke("SendMessageToRoom", "@roomId", "@currentUserId", content);
+            connection.invoke("SendMessageToRoom", "@roomId", "@currentUserId", content);//
             document.getElementById("messageInput").value = "";
         }
     </script>
