@@ -16,7 +16,7 @@ namespace WebMVC.Service
         public async Task<List<Room>> GetRoomsAsync()
         {
             List<Room> rooms = new List<Room>();
-            HttpResponseMessage response = await _httpClient.GetAsync("https://localhost:7295/api/RoomAPI");
+            HttpResponseMessage response = await _httpClient.GetAsync("api/RoomAPI");
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();

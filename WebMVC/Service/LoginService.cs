@@ -19,7 +19,7 @@ namespace WebMVC.Service
         public async Task<List<User>> GetUsersAsync()
         {
             List<User> users = new List<User>();
-            HttpResponseMessage response = await _httpClient.GetAsync("https://localhost:7295/api/LoginAPI");
+            HttpResponseMessage response = await _httpClient.GetAsync("api/LoginAPI");
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
@@ -31,7 +31,7 @@ namespace WebMVC.Service
         public async Task<int> GetIdAsync(LoginRequestDTO loginRequestDTO)
         {
             var content = new StringContent(JsonConvert.SerializeObject(loginRequestDTO), Encoding.UTF8, "application/json");
-            HttpResponseMessage respone = await _httpClient.PostAsync($"https://localhost:7295/api/LoginAPI/login", content);
+            HttpResponseMessage respone = await _httpClient.PostAsync($"api/LoginAPI/login", content);
             if (respone.IsSuccessStatusCode)
             {
                 var data = await respone.Content.ReadAsStringAsync();
@@ -44,7 +44,7 @@ namespace WebMVC.Service
         public async Task<String> GetRole(LoginRequestDTO loginRequestDTO)
         {
             var content = new StringContent(JsonConvert.SerializeObject(loginRequestDTO), Encoding.UTF8, "application/json");
-            HttpResponseMessage respone = await _httpClient.PostAsync($"https://localhost:7295/api/LoginAPI/login", content);
+            HttpResponseMessage respone = await _httpClient.PostAsync($"api/LoginAPI/login", content);
             if (respone.IsSuccessStatusCode)
             {
                 var data = await respone.Content.ReadAsStringAsync();
@@ -58,7 +58,7 @@ namespace WebMVC.Service
         {
             bool isValid = false;
             var content = new StringContent(JsonConvert.SerializeObject(loginRequestDTO), Encoding.UTF8, "application/json");
-            HttpResponseMessage respone = await _httpClient.PostAsync($"https://localhost:7295/api/LoginAPI/login", content);
+            HttpResponseMessage respone = await _httpClient.PostAsync($"api/LoginAPI/login", content);
             if (respone.IsSuccessStatusCode)
             {
                 var data = await respone.Content.ReadAsStringAsync();
@@ -71,7 +71,7 @@ namespace WebMVC.Service
         public async Task<bool> AddUser(RegisterRequestDTO registerRequestDTO)
         {
             var content = new StringContent(JsonConvert.SerializeObject(registerRequestDTO), Encoding.UTF8, "application/json");
-            var respone = await _httpClient.PostAsync("https://localhost:7295/api/LoginAPI/register", content);
+            var respone = await _httpClient.PostAsync("api/LoginAPI/register", content);
             return respone.IsSuccessStatusCode;
         }
     }

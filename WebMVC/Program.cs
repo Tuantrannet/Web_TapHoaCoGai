@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Data;
 using WebMVC.Service.IService;
@@ -11,16 +11,38 @@ using WebMVC.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSignalR();
 
 
-builder.Services.AddHttpClient<IGroceryService, GroceryService>();
-builder.Services.AddHttpClient<ILoginService, LoginService>();
-builder.Services.AddHttpClient<IRoomService, RoomService>();
-builder.Services.AddHttpClient<IMessageService, MessageService>();
+// Đọc từ biến môi trường
+var apiBaseUrl = Environment.GetEnvironmentVariable("API_BASE_URL")
+                 ?? "https://localhost:7295";
+
+// Đăng ký các HttpClient services với BaseAddress
+builder.Services.AddHttpClient<IGroceryService, GroceryService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<ILoginService, LoginService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IRoomService, RoomService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient<IMessageService, MessageService>(client =>
+{
+    client.BaseAddress = new Uri(apiBaseUrl);
+});
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -70,6 +92,25 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Policy1", policy => policy.RequireRole("Admin"));
 });
 
+// Optional: kiểm tra nếu đang chạy trong Docker (biến môi trường)
+var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
+
+if (isDocker)
+{
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(8080); // HTTP only
+    });
+}
+else
+{
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(8080); // HTTP
+        options.ListenAnyIP(8081, listenOptions => listenOptions.UseHttps()); // HTTPS
+    });
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -80,7 +121,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if (!isDocker)
+{
+    app.UseHttpsRedirection();
+}
 app.UseStaticFiles();
 
 app.UseRouting();

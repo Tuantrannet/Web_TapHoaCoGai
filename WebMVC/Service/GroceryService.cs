@@ -17,7 +17,7 @@ namespace WebMVC.Service
         public async Task<List<Grocery>> GetGroceriesAsync(string? searchString = null)
         {
             List<Grocery> groceries = new List<Grocery>();
-            HttpResponseMessage response = await _httpClient.GetAsync("https://localhost:7295/api/GroceryAPI");
+            HttpResponseMessage response = await _httpClient.GetAsync("api/GroceryAPI");
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
@@ -33,7 +33,7 @@ namespace WebMVC.Service
 
         public async Task<Grocery?> GetGroceryByIdAsync(int? id)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"https://localhost:7295/api/GroceryAPI/{id}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"api/GroceryAPI/{id}");
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
@@ -45,20 +45,20 @@ namespace WebMVC.Service
         public async Task<bool> CreateGroceryAsync(Grocery grocery)
         {
             var content = new StringContent(JsonConvert.SerializeObject(grocery), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("https://localhost:7295/api/GroceryAPI", content);
+            var response = await _httpClient.PostAsync("api/GroceryAPI", content);
             return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> UpdateGroceryAsync(Grocery grocery)
         {
             var content = new StringContent(JsonConvert.SerializeObject(grocery), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PutAsync($"https://localhost:7295/api/GroceryAPI/{grocery.Id}", content);
+            var response = await _httpClient.PutAsync($"api/GroceryAPI/{grocery.Id}", content);
             return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> DeleteGroceryAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"https://localhost:7295/api/GroceryAPI/{id}");
+            var response = await _httpClient.DeleteAsync($"api/GroceryAPI/{id}");
             return response.IsSuccessStatusCode;
         }
 

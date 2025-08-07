@@ -1,0 +1,47 @@
+﻿services:
+  webapi:
+    image: ${DOCKER_REGISTRY-}webapi
+    build:
+      context: .
+      dockerfile: WebAPI/Dockerfile
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=TapHoaCoGai;User=sa;Password=Your_password123;Encrypt=False;TrustServerCertificate=True;
+    ports:
+      - "7296:8080"
+      - "7297:8081"
+
+  webmvc:
+    image: ${DOCKER_REGISTRY-}webmvc
+    build:
+      context: .
+      dockerfile: WebMVC/Dockerfile
+    depends_on:
+      - webapi
+    environment:
+      - API_BASE_URL=http://webapi:8080
+    ports:
+      - "7298:8080"
+      - "7299:8081"
+
+  db:
+    build:
+      context: .
+      dockerfile: db/Dockerfile
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./backup:/var/opt/mssql/backup
+    command: >
+      bash -c "
+        /opt/mssql/bin/sqlservr & 
+        sleep 20 &&
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Your_password123 -i /var/opt/mssql/backup/restore.sql &&
+        tail -f /dev/null
+      "
+

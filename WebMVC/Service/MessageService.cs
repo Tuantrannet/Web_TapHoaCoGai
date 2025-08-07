@@ -17,7 +17,7 @@ namespace WebMVC.Service
         public async Task<List<Message>> GetMessagesAsync()
         {
             List<Message> messages = new List<Message>();
-            HttpResponseMessage response = await _httpClient.GetAsync("https://localhost:7295/api/MessageAPI");
+            HttpResponseMessage response = await _httpClient.GetAsync("api/MessageAPI");
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
@@ -32,7 +32,7 @@ namespace WebMVC.Service
             message.Senderid = int.Parse(senderId);
             message.Content = content;
             var send = new StringContent(JsonConvert.SerializeObject(message), Encoding.UTF8, "application/json");
-            var respone = await _httpClient.PostAsync("https://localhost:7295/api/MessageAPI/addmessage", send);
+            var respone = await _httpClient.PostAsync("api/MessageAPI/addmessage", send);
             return respone.IsSuccessStatusCode;
         }
     }
