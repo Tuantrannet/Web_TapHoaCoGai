@@ -8,9 +8,8 @@
       - db
     environment:
       - ConnectionStrings__DefaultConnection=Server=db;Database=TapHoaCoGai;User=sa;Password=Your_password123;Encrypt=False;TrustServerCertificate=True;
-    ports:
-      - "7296:8080"
-      - "7297:8081"
+    expose:
+      - "8080"  # dùng expose vì không cần public ra ngoài VPS
 
   webmvc:
     image: ${DOCKER_REGISTRY-}webmvc
@@ -21,9 +20,8 @@
       - webapi
     environment:
       - API_BASE_URL=http://webapi:8080
-    ports:
-      - "7298:8080"
-      - "7299:8081"
+    expose:
+      - "8080"
 
   db:
     build:
@@ -45,3 +43,11 @@
         tail -f /dev/null
       "
 
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - webmvc
